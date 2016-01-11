@@ -125,7 +125,31 @@ activity_data_NA
 ```
 
 ```r
-merge_activity_data <- merge(activity_data, activity_data_avg_by_interval, by.x = "interval", by.y = "interval",all.x=TRUE)    
+merge_activity_data <- merge(activity_data, activity_data_avg_by_interval, by.x = "interval", by.y = "interval",all.x=TRUE)  
+dim(activity_data_avg_by_interval)
+```
+
+```
+## [1] 288   2
+```
+
+```r
+dim(merge_activity_data)
+```
+
+```
+## [1] 17568     4
+```
+
+```r
+dim(activity_data)
+```
+
+```
+## [1] 17568     3
+```
+
+```r
 head(merge_activity_data )
 ```
 
@@ -138,6 +162,30 @@ head(merge_activity_data )
 ## 5        0       0 2012-11-24 1.716981
 ## 6        0       0 2012-11-15 1.716981
 ```
+
+```r
+merge_activity_data$new_steps <- ifelse(is.na(merge_activity_data$steps.x), merge_activity_data$steps.y,merge_activity_data$steps.x)
+head(merge_activity_data )
+```
+
+```
+##   interval steps.x       date  steps.y new_steps
+## 1        0      NA 2012-10-01 1.716981  1.716981
+## 2        0       0 2012-11-23 1.716981  0.000000
+## 3        0       0 2012-10-28 1.716981  0.000000
+## 4        0       0 2012-11-06 1.716981  0.000000
+## 5        0       0 2012-11-24 1.716981  0.000000
+## 6        0       0 2012-11-15 1.716981  0.000000
+```
+
+```r
+merge_activity_data_total <- merge_activity_data %>% 
+        group_by(date)  %>%
+        summarise(total_daily_steps = sum(new_steps ))
+hist(merge_activity_data_total$total_daily_steps, col = "green",main = " Histogram of Daily Total of Stpes", xlab = " Num of Steps", ylab = "Frequency" )
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
 
 
 ## Are there differences in activity patterns between weekdays and weekends?

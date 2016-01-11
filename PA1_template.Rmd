@@ -50,8 +50,17 @@ activity_data_NA <- sum(is.na(activity_data))
 ```{r}
 ### num of missing values
 activity_data_NA 
-merge_activity_data <- merge(activity_data, activity_data_avg_by_interval, by.x = "interval", by.y = "interval",all.x=TRUE)    
+merge_activity_data <- merge(activity_data, activity_data_avg_by_interval, by.x = "interval", by.y = "interval",all.x=TRUE)  
+dim(activity_data_avg_by_interval)
+dim(merge_activity_data)
+dim(activity_data)
 head(merge_activity_data )
+merge_activity_data$new_steps <- ifelse(is.na(merge_activity_data$steps.x), merge_activity_data$steps.y,merge_activity_data$steps.x)
+head(merge_activity_data )
+merge_activity_data_total <- merge_activity_data %>% 
+        group_by(date)  %>%
+        summarise(total_daily_steps = sum(new_steps ))
+hist(merge_activity_data_total$total_daily_steps, col = "green",main = " Histogram of Daily Total of Stpes", xlab = " Num of Steps", ylab = "Frequency" )
 ```
 
 
