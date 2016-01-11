@@ -2,6 +2,7 @@
 
 
 ## Loading and preprocessing the data
+Assumption is made that the activity.csv file is unzipped and accessible in current working dir
 
 ```r
 library(dplyr)
@@ -96,7 +97,9 @@ plot(activity_data_avg_by_interval$interval, activity_data_avg_by_interval$steps
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+
 ### Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+
 
 ```r
 activity_data_avg_by_interval[which.max(activity_data_avg_by_interval$steps),]
@@ -110,60 +113,25 @@ activity_data_avg_by_interval[which.max(activity_data_avg_by_interval$steps),]
 
 ## Imputing missing values
 ###  Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+The total num of missing values in the original dataset is
 
 ```r
 activity_data_NA <- sum(is.na(activity_data))
-```
-
-```r
-### num of missing values
-activity_data_NA 
+activity_data_NA
 ```
 
 ```
 ## [1] 2304
 ```
 
-```r
-merge_activity_data <- merge(activity_data, activity_data_avg_by_interval, by.x = "interval", by.y = "interval",all.x=TRUE)  
-dim(activity_data_avg_by_interval)
-```
+The missing values (NA) in the 'steps' column in the original dataset  are replaced by the mean for that  5-minute interval.  
+This is done by first merging the original data set with the data set that contains the mean steps for each 5-minute interval.  
+This gives us a newly merged data set with the new colum that contains the mean steps for that particular interval.  
+Then a new colum new_steps is added  this new set which has the original value of steps in case of non NA value, otherwise it is the mean for that 5 minute interval.  
 
-```
-## [1] 288   2
-```
 
 ```r
-dim(merge_activity_data)
-```
-
-```
-## [1] 17568     4
-```
-
-```r
-dim(activity_data)
-```
-
-```
-## [1] 17568     3
-```
-
-```r
-head(merge_activity_data )
-```
-
-```
-##   interval steps.x       date  steps.y
-## 1        0      NA 2012-10-01 1.716981
-## 2        0       0 2012-11-23 1.716981
-## 3        0       0 2012-10-28 1.716981
-## 4        0       0 2012-11-06 1.716981
-## 5        0       0 2012-11-24 1.716981
-## 6        0       0 2012-11-15 1.716981
-```
-
-```r
+merge_activity_data <- merge(activity_data, activity_data_avg_by_interval, by.x = "interval", by.y = "interval",all.x=TRUE) 
 merge_activity_data$new_steps <- ifelse(is.na(merge_activity_data$steps.x), merge_activity_data$steps.y,merge_activity_data$steps.x)
 head(merge_activity_data )
 ```
@@ -182,10 +150,19 @@ head(merge_activity_data )
 merge_activity_data_total <- merge_activity_data %>% 
         group_by(date)  %>%
         summarise(total_daily_steps = sum(new_steps ))
+```
+
+A histogram of the total number of steps taken each day.  
+
+
+```r
 hist(merge_activity_data_total$total_daily_steps, col = "green",main = " Histogram of Daily Total of Stpes", xlab = " Num of Steps", ylab = "Frequency" )
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
+
+Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?  
+
 
 ```r
 mean(merge_activity_data_total$total_daily_steps)
@@ -202,10 +179,14 @@ median(merge_activity_data_total$total_daily_steps)
 ```
 ## [1] 10766.19
 ```
-
+Yes the mean and median of this new datafram with replaced NA values is different from the original.  
+Now the mean and median are the same , unlike for the earlier data set with NA values.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
+The weekdays and weekends are differentiated using chron library's is_weekedn function.  
+Once that is established , dplyr is used to get the means for each interva and type of day ( weekend, or weekday).  
+And plot is created using xyplot.  
 
 ```r
 library(chron)
@@ -220,4 +201,4 @@ xyplot(  ts_data1$avg_steps_per_interval ~ ts_data1$interval |  ts_data1$type_of
      xlab = "Interval")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png) 
