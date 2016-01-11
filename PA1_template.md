@@ -22,7 +22,7 @@ library(dplyr)
 ```
 
 ```r
-activity_data =read.csv("/Users/phukkoo/coursera_reproduceres/project1/activity.csv")
+activity_data =read.csv("~/coursera_reproduceres/project1/activity.csv")
 head(activity_data)
 ```
 

@@ -11,7 +11,7 @@ output:
 Assumption is made that the activity.csv file is unzipped and accessible in current working dir
 ```{r}
 library(dplyr)
-activity_data =read.csv("/Users/phukkoo/coursera_reproduceres/project1/activity.csv")
+activity_data =read.csv("~/coursera_reproduceres/project1/activity.csv")
 head(activity_data)
 names(activity_data)
 activity_data_total <- aggregate(steps ~ date, data = activity_data, sum, na.rm = TRUE)
