@@ -187,5 +187,37 @@ hist(merge_activity_data_total$total_daily_steps, col = "green",main = " Histogr
 
 ![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
 
+```r
+mean(merge_activity_data_total$total_daily_steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
+median(merge_activity_data_total$total_daily_steps)
+```
+
+```
+## [1] 10766.19
+```
+
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+
+```r
+library(chron)
+merge_activity_data$weekend = chron::is.weekend(merge_activity_data$date)
+merge_activity_data$type_of_day <- ifelse(merge_activity_data$weekend, "WEEKEND","WEEKDAY")
+
+ts_data1 <- merge_activity_data %>% 
+        group_by(interval,type_of_day)  %>%
+        summarise(avg_steps_per_interval = mean(new_steps ))
+library(lattice)
+xyplot(  ts_data1$avg_steps_per_interval ~ ts_data1$interval |  ts_data1$type_of_day, type = "l", layout = c(1, 2), ylab = " Number of Steps", 
+     xlab = "Interval")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
